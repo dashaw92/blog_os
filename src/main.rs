@@ -40,6 +40,9 @@ pub extern "C" fn _start() -> ! {
     println!("Hello World{}", "!");
 
     init();
+    unsafe {
+        *(0xDEADBEEF as *mut u64) = 42;
+    }
 
     #[cfg(test)]
     test_main();
