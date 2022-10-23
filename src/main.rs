@@ -19,15 +19,7 @@ use crate::vga::{buffer::set_color, colors::Color};
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
     println!("Hello World{}", "!");
-
     init();
-
-    #[allow(unconditional_recursion)]
-    fn stack_overflow() {
-        stack_overflow();
-    }
-
-    stack_overflow();
 
     #[cfg(test)]
     test_main();
@@ -36,8 +28,7 @@ pub extern "C" fn _start() -> ! {
 }
 
 fn init() {
-    interrupts::gdt::init();
-    interrupts::idt::init();
+    interrupts::init_all();
 }
 
 #[cfg(not(test))]

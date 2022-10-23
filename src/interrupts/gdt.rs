@@ -9,7 +9,7 @@ use x86_64::{
     VirtAddr,
 };
 
-pub const DOUBLE_FAULT_IST_INDEX: u16 = 0;
+pub(super) const DOUBLE_FAULT_IST_INDEX: u16 = 0;
 
 lazy_static! {
     static ref TSS: TaskStateSegment = {
@@ -39,7 +39,7 @@ struct Selectors {
     tss_selector: SegmentSelector,
 }
 
-pub fn init() {
+pub(super) fn init() {
     GDT.0.load();
 
     unsafe {
