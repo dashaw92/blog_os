@@ -25,3 +25,11 @@ extern "x86-interrupt" fn breakpoint_handler(stack_frame: InterruptStackFrame) {
     println!("Breakpoint exception\n{:#?}", stack_frame);
     set_color(DEFAULT_COLOR);
 }
+
+#[cfg(test)]
+mod tests {
+    #[test_case]
+    fn invokes_int3() {
+        x86_64::instructions::interrupts::int3();
+    }
+}
