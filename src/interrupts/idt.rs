@@ -1,6 +1,6 @@
 use crate::{
-    interrupts::pic::InterruptIdx,
-    print, println, serial_println,
+    interrupts::pic::{self, InterruptIdx},
+    print, println,
     vga::{
         buffer::{set_color, DEFAULT_COLOR},
         colors::Color,
@@ -44,8 +44,8 @@ extern "x86-interrupt" fn doublefault_handler(
 
 /// Handles PIC timer interrupts
 extern "x86-interrupt" fn timer_interrupt_handler(_stack_frame: InterruptStackFrame) {
-    serial_println!("{:#?}", _stack_frame);
     print!(".");
+    pic::send_eoi();
 }
 
 #[cfg(test)]

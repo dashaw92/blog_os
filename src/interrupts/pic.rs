@@ -40,3 +40,10 @@ impl From<InterruptIdx> for usize {
         value.as_usize()
     }
 }
+
+pub(super) fn send_eoi() {
+    unsafe {
+        PICS.lock()
+            .notify_end_of_interrupt(InterruptIdx::Timer.into());
+    }
+}
