@@ -1,6 +1,5 @@
 use crate::{serial_print, serial_println};
 
-#[cfg(test)]
 pub(super) fn test_runner(tests: &[&dyn Testable]) {
     use crate::qemu::*;
 
@@ -12,7 +11,7 @@ pub(super) fn test_runner(tests: &[&dyn Testable]) {
     exit_qemu(QemuExitCode::Success);
 }
 
-pub trait Testable {
+pub(super) trait Testable {
     fn run(&self);
 }
 
@@ -24,7 +23,6 @@ impl<T: Fn()> Testable for T {
     }
 }
 
-#[cfg(test)]
 mod tests {
     /// This test is introduced as the first unit test to demonstrate
     /// the working test runner implementation. I'm leaving it here
