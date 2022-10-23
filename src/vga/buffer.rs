@@ -116,3 +116,7 @@ macro_rules! println {
 pub fn _print(args: fmt::Arguments) {
     WRITER.lock().write_fmt(args).unwrap();
 }
+
+pub fn set_color<C: Into<ColorCode>>(c: C) {
+    WRITER.lock().set_color(c.into());
+}

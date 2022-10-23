@@ -11,13 +11,12 @@ mod vga;
 
 use core::panic::PanicInfo;
 
-use crate::vga::colors::{Color, ColorCode};
+use crate::vga::{buffer::set_color, colors::Color};
 
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
-    vga::buffer::WRITER
-        .lock()
-        .set_color(ColorCode::of(Color::White, Color::Red));
+    set_color((Color::White, Color::Red));
+
     println!("PANIC: {}", info);
     loop {}
 }

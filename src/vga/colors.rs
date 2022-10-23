@@ -30,6 +30,12 @@ impl ColorCode {
     }
 }
 
+impl From<(Color, Color)> for ColorCode {
+    fn from(value: (Color, Color)) -> Self {
+        ColorCode::of(value.0, value.1)
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[repr(C)]
 pub(super) struct ScreenChar {
