@@ -138,6 +138,8 @@ pub fn set_color<C: Into<ColorCode>>(c: C) {
 
 #[cfg(test)]
 mod tests {
+    use x86_64::instructions::interrupts;
+
     use crate::vga::buffer::{VGA_HEIGHT, WRITER};
 
     #[test_case]
@@ -152,11 +154,16 @@ mod tests {
 
     #[test_case]
     fn ensure_printing_works() {
+        use core::fmt::Write;
+
         let s = "Some test string that fits on a single line";
-        println!("{}", s);
-        for (i, c) in s.chars().enumerate() {
-            let s_char = WRITER.lock().buffer.chars[VGA_HEIGHT - 2][i].read();
-            assert_eq!(char::from(s_char.ascii), c);
-        }
+        interrupts::without_interrupts(|| {
+            let mut w = WRITER.lock();
+            writeln!(w, "\n{}", s).expect("writeln failed");
+            for (i, c) in s.chars().enumerate() {
+                let s_char = w.buffer.chars[VGA_HEIGHT - 2][i].read();
+                assert_eq!(char::from(s_char.ascii), c);
+            }
+        });
     }
 }
