@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use core::fmt::{self, Write};
 use core::ops::RangeInclusive;
 
@@ -16,6 +18,7 @@ struct Buffer {
     chars: [[Volatile<ScreenChar>; VGA_WIDTH]; VGA_HEIGHT],
 }
 
+/// Wraps the VGA text buffer in memory to provide printing capabilities
 pub struct Writer {
     column: usize,
     color: ColorCode,
@@ -23,6 +26,7 @@ pub struct Writer {
 }
 
 lazy_static! {
+    /// Global instance of Writer
     pub static ref WRITER: Mutex<Writer> = Mutex::new(Writer::new());
 }
 
@@ -35,10 +39,12 @@ impl Writer {
         }
     }
 
+    /// Sets the current color of the output
     pub fn set_color(&mut self, color: ColorCode) {
         self.color = color;
     }
 
+    /// Writes a single `u8` to the internal VGA buffer
     pub fn write_byte(&mut self, byte: u8) {
         match byte {
             b'\n' => self.new_line(),
@@ -57,6 +63,7 @@ impl Writer {
         }
     }
 
+    /// Writes a string, byte by byte, to the internal VGA buffer
     pub fn write_string(&mut self, s: &str) {
         const ASCII_TABLE: RangeInclusive<u8> = 0x20..=0x7E;
 
@@ -101,11 +108,13 @@ impl Write for Writer {
     }
 }
 
+/// Convenience macro for printing to the VGA buffer
 #[macro_export]
 macro_rules! print {
     ($($arg:tt)*) => ($crate::vga::buffer::_print(format_args!($($arg)*)));
 }
 
+/// Convenience macro for printing to the VGA buffer with an added newline (`\n`)
 #[macro_export]
 macro_rules! println {
     () => ($crate::print!("\n"));
@@ -117,6 +126,7 @@ pub fn _print(args: fmt::Arguments) {
     WRITER.lock().write_fmt(args).unwrap();
 }
 
+/// Sets the color of the global VGA buffer `Writer`
 pub fn set_color<C: Into<ColorCode>>(c: C) {
     WRITER.lock().set_color(c.into());
 }

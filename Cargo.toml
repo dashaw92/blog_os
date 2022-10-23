@@ -1,18 +1,37 @@
 [package]
 name = "blog_os"
-version = "0.1.0"
+# Minor release corresponds to the post of the series this OS is implemented up to
+# 0.4.0 => Post 4, "Testing"
+version = "0.4.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+# Writes a bootloader to the beginning of the compiled binary
 bootloader = "0.9.8"
+# Ensures "no-op" writes aren't optimized by the compiler
 volatile = "0.2.6"
+# Basic spinlock mutex implementation
 spin = "0.5.2"
+# Abstraction over x86 instructions
+x86_64 = "0.14.2"
+# Serial implementation
+uart_16550 = "0.2.0"
 
+# Global mutable variables
 [dependencies.lazy_static]
 version = "1"
 features = ["spin_no_std"]
 
 [package.metadata.bootimage]
-test-args = ["-device", "isa-debug-exit,iobase=0xf4,iosize=0x04"]
+test-args = [
+    # Attaches a device that permits early-exits for debugging purposes
+    "-device", "isa-debug-exit,iobase=0xf4,iosize=0x04", 
+    # Redirects serial I/O to host stdio
+    "-serial", "stdio",
+    # Hides the QEMU display when running, since all we're doing is running tests and exiting
+    "-display", "none",
+]
+# 33 matches up with qemu::QemuExitCode::Success after QEMU encodes it
+test-success-exit-code = 33

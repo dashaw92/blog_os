@@ -1,28 +1,26 @@
-use crate::vga::buffer::set_color;
-pub(self) use crate::{print, println};
-
 #[cfg(test)]
 pub(super) fn test_runner(tests: &[&dyn Fn()]) {
-    use crate::vga::{buffer::DEFAULT_COLOR, colors::Color};
+    use crate::qemu::*;
+    use crate::serial_println as println;
 
-    set_color((Color::Yellow, Color::Black));
-    println!("Running {} tests", tests.len());
-    set_color((Color::Black, Color::White));
+    println!("Running {} test(s)", tests.len());
     for &test in tests {
         test();
     }
 
-    set_color(DEFAULT_COLOR);
+    exit_qemu(QemuExitCode::Success);
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+
+    use crate::serial_print as print;
+    use crate::serial_println as println;
 
     #[test_case]
     fn trivial() {
         print!("Trivial assertion... ");
-        assert_eq!(1, 1);
+        assert_eq!(1, 2);
         println!("[ok]");
     }
 }
