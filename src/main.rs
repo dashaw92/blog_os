@@ -23,16 +23,19 @@ pub extern "C" fn _start() -> ! {
     test_main();
 
     println!("It did not crash!");
-
-    #[allow(clippy::empty_loop)]
-    loop {
-        for _ in 0..10000 {}
-        print!("-");
-    }
+    halt();
 }
 
 fn init() {
     interrupts::init_all();
+}
+
+/// Executes HLT in an endless loop- instead of the CPU spinning endlessly,
+/// the CPU is put into a "sleep state" where it consumes MUCH less energy.
+pub fn halt() -> ! {
+    loop {
+        x86_64::instructions::hlt();
+    }
 }
 
 #[cfg(not(test))]
@@ -43,7 +46,7 @@ fn panic(info: &PanicInfo) -> ! {
 
     println!("PANIC: {}", info);
 
-    loop {}
+    halt();
 }
 
 #[cfg(test)]

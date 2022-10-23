@@ -17,6 +17,7 @@ pub(super) fn init() {
 #[repr(u8)]
 pub(super) enum InterruptIdx {
     Timer = PIC_1_OFFSET,
+    Keyboard,
 }
 
 impl InterruptIdx {
@@ -41,9 +42,8 @@ impl From<InterruptIdx> for usize {
     }
 }
 
-pub(super) fn send_eoi() {
+pub(super) fn send_eoi(idx: InterruptIdx) {
     unsafe {
-        PICS.lock()
-            .notify_end_of_interrupt(InterruptIdx::Timer.into());
+        PICS.lock().notify_end_of_interrupt(idx.into());
     }
 }

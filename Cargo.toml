@@ -20,6 +20,8 @@ x86_64 = "0.14.2"
 uart_16550 = "0.2.0"
 # Basic abstraction over the Intel 8259 PIC (Programmable interrupt controller)
 pic8259 = "0.10.1"
+# Interprets scancodes from the PIC into chars
+pc-keyboard = "0.5.0"
 
 # Global mutable variables
 [dependencies.lazy_static]
