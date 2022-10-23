@@ -7,12 +7,13 @@ use spin::Mutex;
 use volatile::Volatile;
 
 const VGA_ADDR_START: usize = 0xB8000;
-const BUFFER_WIDTH: usize = 80;
-const BUFFER_HEIGHT: usize = 25;
+pub const VGA_WIDTH: usize = 80;
+pub const VGA_HEIGHT: usize = 25;
+pub const DEFAULT_COLOR: ColorCode = ColorCode::of(Color::LightGray, Color::Black);
 
 #[repr(transparent)]
 struct Buffer {
-    chars: [[Volatile<ScreenChar>; BUFFER_WIDTH]; BUFFER_HEIGHT],
+    chars: [[Volatile<ScreenChar>; VGA_WIDTH]; VGA_HEIGHT],
 }
 
 pub struct Writer {
@@ -29,20 +30,24 @@ impl Writer {
     fn new() -> Self {
         Self {
             column: 0,
-            color: ColorCode::of(Color::LightGray, Color::Blue),
+            color: DEFAULT_COLOR,
             buffer: unsafe { &mut *(VGA_ADDR_START as *mut Buffer) },
         }
+    }
+
+    pub fn set_color(&mut self, color: ColorCode) {
+        self.color = color;
     }
 
     pub fn write_byte(&mut self, byte: u8) {
         match byte {
             b'\n' => self.new_line(),
             byte => {
-                if self.column >= BUFFER_WIDTH {
+                if self.column >= VGA_WIDTH {
                     self.new_line();
                 }
 
-                let row = BUFFER_HEIGHT - 1;
+                let row = VGA_HEIGHT - 1;
                 let col = self.column;
 
                 let color = self.color;
@@ -67,23 +72,23 @@ impl Writer {
     }
 
     fn new_line(&mut self) {
-        for row in 1..BUFFER_HEIGHT {
-            for col in 0..BUFFER_WIDTH {
+        for row in 1..VGA_HEIGHT {
+            for col in 0..VGA_WIDTH {
                 let character = self.buffer.chars[row][col].read();
                 self.buffer.chars[row - 1][col].write(character);
             }
         }
-        self.clear_row(BUFFER_HEIGHT - 1);
+        self.clear_row(VGA_HEIGHT - 1);
         self.column = 0;
     }
 
     fn clear_row(&mut self, row: usize) {
         let blank = ScreenChar {
             ascii: b' ',
-            color: self.color,
+            color: DEFAULT_COLOR,
         };
 
-        for col in 0..BUFFER_WIDTH {
+        for col in 0..VGA_WIDTH {
             self.buffer.chars[row][col].write(blank);
         }
     }

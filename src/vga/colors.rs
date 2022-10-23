@@ -25,7 +25,7 @@ pub enum Color {
 pub struct ColorCode(u8);
 
 impl ColorCode {
-    pub fn of(fg: Color, bg: Color) -> Self {
+    pub const fn of(fg: Color, bg: Color) -> Self {
         Self((bg as u8) << 4 | fg as u8)
     }
 }
