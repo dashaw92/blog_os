@@ -16,6 +16,30 @@ use core::panic::PanicInfo;
 
 use crate::vga::{buffer::set_color, colors::Color};
 
+#[no_mangle]
+pub extern "C" fn _start() -> ! {
+    println!("Hello World{}", "!");
+
+    init();
+
+    #[allow(unconditional_recursion)]
+    fn stack_overflow() {
+        stack_overflow();
+    }
+
+    stack_overflow();
+
+    #[cfg(test)]
+    test_main();
+
+    panic!("Halting!");
+}
+
+fn init() {
+    interrupts::gdt::init();
+    interrupts::idt::init();
+}
+
 #[cfg(not(test))]
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
@@ -33,23 +57,4 @@ fn panic(info: &PanicInfo) -> ! {
 
     serial_println!("TEST PANIC: {}", info);
     exit_qemu(QemuExitCode::Failed);
-}
-
-#[no_mangle]
-pub extern "C" fn _start() -> ! {
-    println!("Hello World{}", "!");
-
-    init();
-    unsafe {
-        *(0xDEADBEEF as *mut u64) = 42;
-    }
-
-    #[cfg(test)]
-    test_main();
-
-    panic!("Halting!");
-}
-
-fn init() {
-    interrupts::init_idt();
 }
