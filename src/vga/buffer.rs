@@ -130,3 +130,28 @@ pub fn _print(args: fmt::Arguments) {
 pub fn set_color<C: Into<ColorCode>>(c: C) {
     WRITER.lock().set_color(c.into());
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::vga::buffer::{VGA_HEIGHT, WRITER};
+
+    #[test_case]
+    fn test_println_simple() {
+        println!("test_println_simple output");
+    }
+
+    #[test_case]
+    fn test_println_many() {
+        (1..=200).for_each(|x| println!("Testing print {}", x));
+    }
+
+    #[test_case]
+    fn ensure_printing_works() {
+        let s = "Some test string that fits on a single line";
+        println!("{}", s);
+        for (i, c) in s.chars().enumerate() {
+            let s_char = WRITER.lock().buffer.chars[VGA_HEIGHT - 2][i].read();
+            assert_eq!(char::from(s_char.ascii), c);
+        }
+    }
+}
