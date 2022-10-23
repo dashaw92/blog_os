@@ -24,7 +24,8 @@ pub extern "C" fn _start() -> ! {
     #[cfg(test)]
     test_main();
 
-    panic!("Halting!");
+    println!("It did not crash!");
+    loop {}
 }
 
 fn init() {

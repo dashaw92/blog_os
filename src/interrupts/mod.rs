@@ -10,4 +10,5 @@ pub(crate) fn init_all() {
     gdt::init();
     idt::init();
     pic::init();
+    x86_64::instructions::interrupts::enable();
 }

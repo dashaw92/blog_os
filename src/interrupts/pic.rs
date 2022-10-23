@@ -12,3 +12,31 @@ pub(super) fn init() {
         PICS.lock().initialize();
     }
 }
+
+#[derive(Debug, Clone, Copy)]
+#[repr(u8)]
+pub(super) enum InterruptIdx {
+    Timer = PIC_1_OFFSET,
+}
+
+impl InterruptIdx {
+    pub(super) fn as_u8(self) -> u8 {
+        self as u8
+    }
+
+    pub(super) fn as_usize(self) -> usize {
+        usize::from(self.as_u8())
+    }
+}
+
+impl From<InterruptIdx> for u8 {
+    fn from(value: InterruptIdx) -> Self {
+        value.as_u8()
+    }
+}
+
+impl From<InterruptIdx> for usize {
+    fn from(value: InterruptIdx) -> Self {
+        value.as_usize()
+    }
+}

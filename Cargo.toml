@@ -27,6 +27,10 @@ version = "1"
 features = ["spin_no_std"]
 
 [package.metadata.bootimage]
+run-args = [
+    # Redirect serial I/O to host stdio
+    "-serial", "stdio"
+]
 test-args = [
     # Attaches a device that permits early-exits for debugging purposes
     "-device", "isa-debug-exit,iobase=0xf4,iosize=0x04", 
