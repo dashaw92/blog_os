@@ -2,7 +2,7 @@
 name = "blog_os"
 # Minor release corresponds to the post of the series this OS is implemented up to
 # 0.4.0 => Post 4, "Testing"
-version = "0.4.0"
+version = "0.5.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
