@@ -7,6 +7,7 @@ use crate::vga::colors::*;
 use lazy_static::lazy_static;
 use spin::Mutex;
 use volatile::Volatile;
+use x86_64::instructions::interrupts;
 
 const VGA_ADDR_START: usize = 0xB8000;
 pub const VGA_WIDTH: usize = 80;
@@ -123,12 +124,16 @@ macro_rules! println {
 
 #[doc(hidden)]
 pub fn _print(args: fmt::Arguments) {
-    WRITER.lock().write_fmt(args).unwrap();
+    interrupts::without_interrupts(|| {
+        WRITER.lock().write_fmt(args).unwrap();
+    });
 }
 
 /// Sets the color of the global VGA buffer `Writer`
 pub fn set_color<C: Into<ColorCode>>(c: C) {
-    WRITER.lock().set_color(c.into());
+    interrupts::without_interrupts(|| {
+        WRITER.lock().set_color(c.into());
+    });
 }
 
 #[cfg(test)]

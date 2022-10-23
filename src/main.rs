@@ -25,7 +25,12 @@ pub extern "C" fn _start() -> ! {
     test_main();
 
     println!("It did not crash!");
-    loop {}
+
+    #[allow(clippy::empty_loop)]
+    loop {
+        for _ in 0..10000 {}
+        print!("-");
+    }
 }
 
 fn init() {
